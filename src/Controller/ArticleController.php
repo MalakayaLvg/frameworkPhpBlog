@@ -37,4 +37,55 @@ class ArticleController extends \Core\Controller\Controller {
         ]);
     }
 
+    public function delete(): Response
+    {
+        $id = $_GET['id'] ?? null;
+
+        if ($id && ctype_digit($id)) {
+            $articleRepository = new ArticleRepository();
+            $article = $articleRepository->find($id);
+
+            if ($article) {
+                $articleRepository->delete($article);
+            }
+        }
+
+        return $this->redirect("?type=article&action=index");
+    }
+
+    public function edit(): Response
+    {
+        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+
+        if ($id && ctype_digit($id)) {
+            $articleRepository = new ArticleRepository();
+            $article = $articleRepository->find($id);
+
+            if (!$article) {
+                return $this->redirect();
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $title = $_POST['title'] ?? null;
+                $content = $_POST['content'] ?? null;
+
+                if ($title && $content) {
+                    $article->setTitle($title);
+                    $article->setContent($content);
+
+                    $articleRepository->edit($article);
+
+                    return $this->redirect("?type=article&action=index");
+                }
+            }
+
+            return $this->render("article/edit", [
+                "pageTitle" => $article->getTitle(),
+                "article" => $article,
+            ]);
+        }
+
+        return $this->redirect("?type=article&action=index");
+    }
+
 }

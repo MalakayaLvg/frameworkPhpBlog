@@ -25,16 +25,18 @@ class ArticleRepository extends Repository
 
     public function edit(Article $article)
     {
-        $query = $this->pdo->prepare("UPDATE $this->tableName SET name = :name, description = :description WHERE id = :id");
+        $query = $this->pdo->prepare("UPDATE $this->tableName SET title = :title, content = :content WHERE id = :id");
         $query->execute([
             "id"=>$article->getId(),
-            "name"=>$article->getTitle(),
-            "description"=>$article->getContent(),
+            "title"=>$article->getTitle(),
+            "content"=>$article->getContent(),
         ]);
 
         return $this->find($article->getId());
 
 
     }
+
+
 
 }
